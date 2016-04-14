@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style>
+			body { background:#f1f1f1; font-family:微软雅黑; font-size:16px;-webkit-user-select: none; }
+			#box { width:800px; height:450px; border:1px solid #066; background:#FFF; margin:20px auto 0; position:relative; top:0; left:0;}
+			#fraction { width:130px; border:1px solid #066; position:relative; top:-1px; left:-152px; background:#FFC; padding:10px; }
+			#fraction p { margin:0; font-family:微软雅黑; font-size:16px; line-height:30px; }
+
+			#alert { text-align:center; }
+			img{width: 80px; height: 80px;}
+			#qq{width: 80px; height: 80px;}
+			#img1{position: absolute;top: 0;display: none;left: 0;}
+		</style>
+		<script src="js.js"></script>
+	</head>
+	<body>
+		<div id="alert">
+			<h2>你的鼠标有多快？</h2>
+			<p>游戏说明：点击“开始游戏”，随机掉下QQ表情，点中它，千万别让它掉下去！！</p>
+			<input type="button" value="开始游戏"  id="btn"/>
+		</div>
+		<div id="box">
+			<div id="fraction">
+			  	<p>得分：0 分</p>
+			  	<p>失分：0 分</p>
+			</div>
+			<div id="qq"><img src="img/1.gif" id="img1"/></div>
+		</div>
+		<script>
+			/*首先点击开始游戏，图片随机往下落，当我们点中图片左侧的得分数量加加，没点中失分数量加加，当失分数量累计到十游戏结束，图片停止往下掉，弹出结束游戏
+			 定义一个变量  图片随机还有左边距离随机
+			 然后当我们点击开始游戏     图片开始往下落   定一个定时器
+			 * */
+			var Input = $("#btn");
+			var leftNav = $("#fraction");
+			var aP = $("p",leftNav);
+			var Pic = $("#img1");
+			var Box = $("#box");
+			var Qbox = $("#qq");
+			var arrimg = ["img/1.gif","img/2.jpg","img/3.jpg","img/4.jpg","img/5.jpg","img/6.gif"];
+			var Number =Math.floor(Math.random()*5);//随机图片
+			var Lefts = Math.floor(Math.random()*720)+"px";//左边
+			var Df = 0;//得分
+			var Sf = 0;//失分
+			var time = null;
+			Input.onclick = function(){
+				speed=0.5;//速度
+				Input.value ="游戏进行中...";
+				Input.disabled = true;
+				Pic.style.display = "block";
+				fn();
+				console.log(arrimg[Number])
+			}
+			Pic.onmousedown= function(){
+				Lefts = Math.floor(Math.random()*720)+"px";
+				Number =Math.floor(Math.random()*5);
+				clearInterval(Pic.timer);
+				clearInterval(time);
+				Pic.timer = null;
+				Pic.src =arrimg[5];
+				shake(Pic,'left',30,function(){
+					Pic.style.top=0;
+					fn();
+					Df++;
+					speed++;
+					aP[0] .innerHTML="得分："+ Df +" 分";
+				})
+				console.log(Df)
+			};
+			function fn(){
+				Pic.style.left=Lefts;
+				Pic.src = arrimg[Number];
+				time = setInterval(function(){
+					doMove(Pic,"top",380,speed,function(){
+						shake(Box,"top",10);
+						Sf++;
+						aP[1].innerHTML="失分："+ Sf +" 分";
+						Pic.style.top=0;
+						Pic.src =arrimg[Math.floor(Math.random()*5)];	
+						Pic.style.left = Math.floor(Math.random()*720)+"px";
+						if(Sf>=4){
+							Pic.style.display="none";
+							alert("很抱歉，游戏到此结束");
+							clearInterval(time);
+							Input.value ="开始游戏";
+							Input.disabled = false;
+							aP[0].innerHTML="得分："+ 0 +" 分";
+							aP[1].innerHTML="失分："+ 0 +" 分";
+							Sf =0;
+							Df =0;
+							
+						}
+						
+					})
+					
+				},100)
+			}
+		</script>
+	</body>
+</html>

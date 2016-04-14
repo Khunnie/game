@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style>
+			body { background:url(img/b.jpg); font-family:微软雅黑; font-size:16px;-webkit-user-select: none; }
+			#box { width:800px; height:450px; border:1px solid #066; background:#FFF; margin:20px auto 0; position:relative; top:0; left:0;}
+			#fraction { width:130px; border:1px solid #066; position:relative; top:-1px; left:-152px; background:#FFC; padding:10px; }
+			#fraction p { margin:0; font-family:微软雅黑; font-size:16px; line-height:30px; }
+
+			#alert { text-align:center; }
+			#btn{width:150px;height:50px; background: url(img/head.png);margin: 0 auto; border:none;outline: none;}
+			img{width: 50px; height: 50px;}
+			#qq{width: 50px; height: 50px;}
+			#img1{position: absolute;top: 0;display: none;left: 0;}
+		</style>
+		<script src="js.js"></script>
+	</head>
+	<body>
+		<div id="alert">
+			<h2>你的鼠标有多快？</h2>
+			<p>游戏说明：点击“开始游戏”，随机掉下QQ表情，点中它，千万别让它掉下去！！</p>
+			<div id="btn"></div>
+		</div>
+		<div id="box">
+			<div id="fraction">
+			  	<p>得分：0 分</p>
+			  	<p>失分：0 分</p>
+			</div>
+			<div id="qq"><img src="img/1.gif" id="img1"/></div>
+		</div>
+		<script>
+			function Game(obj){
+				this.obj=obj;
+				this.Pic = $("img",obj)[0];//img
+				this.Ap = $("p",obj);//得分失分
+				this.speed=1;
+				this.SF=0;
+				this.DF=0;
+				this.click();
+				this.btn=1;
+				
+			}
+			Game.prototype.pic = function(){
+				this.Pic.style.left = Math.floor(Math.random()*720)+"px";
+				this.Pic.src = "img/"+ (Math.round(Math.random()*4) + 1) +".gif";
+			}
+			Game.prototype.play = function(){
+				this.pic();
+				this.speed+=0.5;
+				var that = this;
+				doMove(that.Pic,"top",400,that.speed,function(){
+					shake(that.obj,"top",10,function(){
+						that.SF++;
+						that.Ap[1].innerHTML="失分："+ that.SF +" 分";
+						that.Pic.style.top=0;
+						if(that.rose()) that.play();		
+					})
+				})
+			}
+			Game.prototype.reste= function(){
+				this.speed=1;
+				this.btn.disabled=false;
+				this.SF = 0;
+				this.DF = 0;
+				this.Ap[0].innerHTML="得分："+ 0 +" 分";
+				this.Ap[1].innerHTML="失分："+ 0 +" 分";
+			}
+			Game.prototype.rose = function(){
+				if( this.SF >= 5 ){
+					this.Pic.style.display="none";
+					alert("您输了！！");
+					this.reste()
+					return false
+				}
+				return true;
+			}
+			Game.prototype.click = function(){
+				var that = this;
+				this.Pic.onmousedown = function(){
+					if( this.onOff ) return;
+					this.onOff = true;
+					clearInterval(that.Pic.timer);
+					that.Pic.timer = null;
+					that.Pic.src = "img/6.gif";
+					that.DF++;
+					that.Ap[0].innerHTML = "得分："+that.DF+" 分";
+					shake(that,"left",10,function (){
+						that.Pic.onOff = false;
+						that.Pic.style.top = 0;
+						if(that.rose()) that.play();		
+					})	
+				}
+				
+			}
+			
+			var Box =new Game($("#box")) ;
+			var Pic = $("#img1");//图片
+			$("#btn").onclick=function(){
+				this.disabled = true;
+				Pic.style.display="block";
+				Box.play(this);
+			}
+			
+		</script>
+	</body>
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style>
+			body { background:url(img/b.jpg); font-family:微软雅黑; font-size:16px;-webkit-user-select: none; }
+			#box { width:800px; height:450px; border:1px solid #066; background:#FFF; margin:20px auto 0; position:relative; top:0; left:0;}
+			#fraction { width:130px; border:1px solid #066; position:relative; top:-1px; left:-152px; background:#FFC; padding:10px; }
+			#fraction p { margin:0; font-family:微软雅黑; font-size:16px; line-height:30px; }
+
+			#alert { text-align:center; }
+			#btn{width:150px;height:50px; background: url(img/head.png);margin: 0 auto; border:none;outline: none;}
+			img{width: 50px; height: 50px;}
+			#qq{width: 50px; height: 50px;}
+			#img1{position: absolute;top: 0;display: none;left: 0;}
+		</style>
+		<script src="js.js"></script>
+	</head>
+	<body>
+		<div id="alert">
+			<h2>你的鼠标有多快？</h2>
+			<p>游戏说明：点击“开始游戏”，随机掉下QQ表情，点中它，千万别让它掉下去！！</p>
+			<input type="button" id="btn">
+		</div>
+		<div id="box">
+			<div id="fraction">
+			  	<p>得分：0 分</p>
+			  	<p>失分：0 分</p>
+			</div>
+			<div id="qq"><img src="img/1.gif" id="img1"/></div>
+		</div>
+		<script>
+			var Btn = $("#btn");//点击
+			var Pic = $("#img1");//图片
+			var Box = $("#box");
+			var Point = $("#fraction");
+			var Ap = $("p",Point);//得分失分
+			var speed = 1;//速度
+			var SF = 0;//失分
+			var DF = 0;//得分
+			Btn.onclick = function(){//点击按钮
+				Btn.disabled=true;
+				Pic.style.display="block";
+				speed=1;
+				fn();
+			}
+			Pic.onmousedown = function (){
+				if( this.onOff ) return;
+				this.onOff = true;
+				clearInterval(Pic.timer);
+				Pic.timer = null;
+				Pic.src = "img/6.gif";
+				DF++;
+				Ap[0].innerHTML = "得分："+DF+" 分";
+				shake(this,"left",10,function (){
+					Pic.onOff = false;
+					Pic.style.top = 0;
+					fn();		
+				})	
+			};
+			function Bonus(){//失分
+				if( SF >= 5 ){
+					Pic.style.display="none";
+					alert("您输了！！");
+					SF = 0;
+					DF = 0;
+					Ap[0].innerHTML="得分："+ 0 +" 分";
+					Ap[1].innerHTML="失分："+ 0 +" 分";
+					Btn.disabled=false;
+					return false;
+				}
+				
+			
+				return true;	
+			}
+			function fn(){//掉落
+				Pic.style.left = Math.floor(Math.random()*720)+"px";
+				Pic.src = "img/"+ (Math.round(Math.random()*4) + 1) +".gif";
+				speed+=0.5;
+				doMove(Pic,"top",400,speed,function(){
+					shake(Box,"top",10,function(){
+						SF++;
+						Ap[1].innerHTML="失分："+ SF +" 分";
+						Pic.style.top=0;
+						if(Bonus()){
+							fn();
+						}
+					})
+				})
+			}
+		</script>
+	</body>
+</html>
